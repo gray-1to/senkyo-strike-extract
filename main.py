@@ -58,8 +58,8 @@ for row_index in range(3, input_ws.max_row + 1):
             no_striken_ws.cell(row=copy_to_row_index, column=copy_to_col_index, value=original_cell)
 
 # 出力ファイル保存
-striken_wb.save(CURRENT_PATH + "/output/strikens.xlsx")
-no_striken_wb.save(CURRENT_PATH + "/output/no-strikens.xlsx")
+striken_wb.save(CURRENT_PATH + "/output/strike.xlsx")
+no_striken_wb.save(CURRENT_PATH + "/output/no-strike.xlsx")
 input_wb.close()
 striken_wb.close()
 no_striken_wb.close()
