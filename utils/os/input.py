@@ -7,6 +7,7 @@ from openpyxl.worksheet._read_only import ReadOnlyWorksheet
 from openpyxl.worksheet.worksheet import Worksheet
 
 
+# TODO 返り値の型アノテーション
 def get_input_xlsx_data() -> list:
     try:
         CURRENT_PATH: str = os.getcwd()

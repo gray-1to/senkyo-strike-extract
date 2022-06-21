@@ -41,6 +41,7 @@ def operation(
                     striken_cell.font = original_cell.font._StyleProxy__target
                     striken_cell.number_format = original_cell.number_format
                     striken_cell.data_type = original_cell.data_type
+                    # TODO Cellクラスの親クラスStyleableObjectのメンバ変数への警告の修正
                     striken_cell.hyperlink = original_cell.hyperlink
                     striken_cell.comment = original_cell.comment
                     striken_cell.value = original_cell.value
@@ -64,6 +65,7 @@ def operation(
                     no_striken_cell.font = original_cell.font._StyleProxy__target
                     no_striken_cell.number_format = original_cell.number_format
                     no_striken_cell.data_type = original_cell.data_type
+                    # TODO Cellクラスの親クラスStyleableObjectのメンバ変数への警告の修正
                     no_striken_cell.hyperlink = original_cell.hyperlink
                     no_striken_cell.comment = original_cell.comment
                     no_striken_cell.value = original_cell.value

@@ -7,6 +7,7 @@ from openpyxl.worksheet._read_only import ReadOnlyWorksheet
 from openpyxl.worksheet.worksheet import Worksheet
 
 
+# 返り値の型アノテーション
 def prepare_output_xlsx_data(
     input_ws: Union[Worksheet, ReadOnlyWorksheet],
 ) -> list:
