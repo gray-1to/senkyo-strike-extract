@@ -1,27 +1,19 @@
 from typing import Union
 
 import pandas as pd
-from openpyxl.cell.cell import Cell
 from openpyxl.worksheet._read_only import ReadOnlyWorksheet
 from openpyxl.worksheet.worksheet import Worksheet
-from utils.convert.convert import to_str
+from utils.os.output import prepare_output_pd
 
 
 def operation(input_ws: Union[Worksheet, ReadOnlyWorksheet]) -> list[pd.DataFrame]:
 
-    # 出力データ用配列を準備
     input_width: int = input_ws.max_column
     input_height: int = input_ws.max_row
-    # 出力データ用配列の大きさは入力データの大きさを全て格納できる大きさに
-    init_data: list[list[str]] = [["" for i in range(input_width)] for j in range(input_height)]
-    striken_data: pd.DataFrame = pd.DataFrame(data=init_data)
-    no_striken_data: pd.DataFrame = pd.DataFrame(data=init_data)
-    for col_index in range(0, input_width):
-        # openpyxlのcellは1から始まるので+1
-        striken_data[col_index][0] = to_str(input_ws.cell(row=1, column=col_index + 1).value)
-        striken_data[col_index][1] = to_str(input_ws.cell(row=2, column=col_index + 1).value)
-        no_striken_data[col_index][0] = to_str(input_ws.cell(row=1, column=col_index + 1).value)
-        no_striken_data[col_index][1] = to_str(input_ws.cell(row=2, column=col_index + 1).value)
+
+    # 出力データ用配列を準備
+    striken_data: pd.DataFrame = prepare_output_pd(input_height, input_width, input_ws)
+    no_striken_data: pd.DataFrame = prepare_output_pd(input_height, input_width, input_ws)
 
     # check対象の列を特定
     check_col_indexes: list[int] = []
@@ -48,7 +40,7 @@ def operation(input_ws: Union[Worksheet, ReadOnlyWorksheet]) -> list[pd.DataFram
                     row=row_index + 1, column=copy_to_col_index + 1
                 ).value  # openpyxlのcellは1列目が0になるので+1
                 striken_data[copy_to_col_index][striken_data_height] = original_value
-            striken_data_height: int = striken_data_height + 1
+            striken_data_height = striken_data_height + 1
         # 打ち消し線がcheck対象の列にない場合
         else:
             # no_striken.xlsxの最終行に追加

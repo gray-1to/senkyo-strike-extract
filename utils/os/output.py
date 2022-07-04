@@ -2,21 +2,22 @@ import os
 from typing import Union
 
 import pandas as pd
-from openpyxl import Workbook
 from openpyxl.workbook.workbook import Workbook
 from openpyxl.worksheet._read_only import ReadOnlyWorksheet
 from openpyxl.worksheet.worksheet import Worksheet
+from utils.convert.convert import to_str
 
-# TODO 返り値の型アノテーション
-# def prepare_output_xlsx_data(
-#     input_ws: Union[Worksheet, ReadOnlyWorksheet],
-# ) -> list:
-#     new_wb: Workbook = Workbook()
-#     new_ws: Worksheet = new_wb.active
-#     for col_index in range(1, input_ws.max_column + 1):
-#         new_ws.cell(row=1, column=col_index, value=input_ws.cell(row=1, column=col_index).value)
-#         new_ws.cell(row=2, column=col_index, value=input_ws.cell(row=2, column=col_index).value)
-#     return [new_wb, new_ws]
+
+def prepare_output_pd(height: int, width: int, input_ws: Union[Worksheet, ReadOnlyWorksheet]) -> pd.DataFrame:
+    # 出力データ用配列を準備
+    # 出力データ用配列の大きさは入力データの大きさを全て格納できる大きさに
+    init_data: list[list[str]] = [["" for i in range(width)] for j in range(height)]
+    output_pd: pd.DataFrame = pd.DataFrame(data=init_data)
+    for col_index in range(0, width):
+        # openpyxlのcellは1から始まるので+1
+        output_pd[col_index][0] = to_str(input_ws.cell(row=1, column=col_index + 1).value)
+        output_pd[col_index][1] = to_str(input_ws.cell(row=2, column=col_index + 1).value)
+    return output_pd
 
 
 def create_output_xlsx(strike_data: pd.DataFrame, no_strike_data: pd.DataFrame) -> None:
