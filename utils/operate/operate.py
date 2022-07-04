@@ -1,74 +1,62 @@
 from typing import Union
 
+import pandas as pd
 from openpyxl.cell.cell import Cell
 from openpyxl.worksheet._read_only import ReadOnlyWorksheet
 from openpyxl.worksheet.worksheet import Worksheet
+from utils.convert.convert import to_str
 
 
-def operation(
-    input_ws: Union[Worksheet, ReadOnlyWorksheet],
-    striken_ws: Union[Worksheet, ReadOnlyWorksheet],
-    no_striken_ws: Union[Worksheet, ReadOnlyWorksheet],
-) -> None:
+def operation(input_ws: Union[Worksheet, ReadOnlyWorksheet]) -> list[pd.DataFrame]:
+
+    # 出力データ用配列を準備
+    input_width: int = input_ws.max_column
+    input_height: int = input_ws.max_row
+    # 出力データ用配列の大きさは入力データの大きさを全て格納できる大きさに
+    init_data: list[list[str]] = [["" for i in range(input_width)] for j in range(input_height)]
+    striken_data: pd.DataFrame = pd.DataFrame(data=init_data)
+    no_striken_data: pd.DataFrame = pd.DataFrame(data=init_data)
+    for col_index in range(0, input_width):
+        # openpyxlのcellは1から始まるので+1
+        striken_data[col_index][0] = to_str(input_ws.cell(row=1, column=col_index + 1).value)
+        striken_data[col_index][1] = to_str(input_ws.cell(row=2, column=col_index + 1).value)
+        no_striken_data[col_index][0] = to_str(input_ws.cell(row=1, column=col_index + 1).value)
+        no_striken_data[col_index][1] = to_str(input_ws.cell(row=2, column=col_index + 1).value)
+
     # check対象の列を特定
-    check_col_index: list = []
-    for col_index in range(1, input_ws.max_column + 1):
-        if input_ws.cell(row=1, column=col_index).value == "check":
-            check_col_index.insert(-1, col_index)
+    check_col_indexes: list[int] = []
+    for col_index in range(0, input_width):
+        if input_ws.cell(row=1, column=col_index + 1).value == "check":
+            check_col_indexes.insert(-1, col_index)
 
+    # 探索準備
+    striken_data_height: int = 2
+    no_striken_data_height: int = 2
     # 探索開始
     # 1,2行目はヘッダーなので、3行目からチェック開始
-    for row_index in range(3, input_ws.max_row + 1):
+    for row_index in range(2, input_height):
         striken_detected: bool = False
         # check対象の列をチェック
-        for col_index in check_col_index:
-            if input_ws.cell(row=row_index, column=col_index).font.strike is True:
+        for col_index in check_col_indexes:
+            if input_ws.cell(row=row_index + 1, column=col_index + 1).font.strike is True:
                 striken_detected = True
         # 打ち消し線がcheck対象の列にある場合
         if striken_detected:
             # striken.xlsxの最終行に追加
-            copy_to_row_index: int = striken_ws.max_row + 1
-            for copy_to_col_index in range(1, input_ws.max_column + 1):
-                original_cell = input_ws.cell(row=row_index, column=copy_to_col_index)
-                striken_cell = striken_ws.cell(
-                    row=copy_to_row_index, column=copy_to_col_index, value=original_cell.value
-                )
-                if type(striken_cell) is Cell:
-                    # 文字装飾のコピー
-                    striken_cell.alignment = original_cell.alignment._StyleProxy__target
-                    striken_cell.border = original_cell.border._StyleProxy__target
-                    striken_cell.fill = original_cell.fill._StyleProxy__target
-                    striken_cell.font = original_cell.font._StyleProxy__target
-                    striken_cell.number_format = original_cell.number_format
-                    striken_cell.data_type = original_cell.data_type
-                    # TODO Cellクラスの親クラスStyleableObjectのメンバ変数への警告の修正
-                    striken_cell.hyperlink = original_cell.hyperlink
-                    striken_cell.comment = original_cell.comment
-                    striken_cell.value = original_cell.value
-                    striken_cell.protection = original_cell.protection._StyleProxy__target
-                else:
-                    print("正しくセルに書き込めませんでした。striken.xlsx {}行目 {}列目".format(copy_to_col_index, copy_to_row_index))
+            for copy_to_col_index in range(0, input_width):
+                original_value = input_ws.cell(
+                    row=row_index + 1, column=copy_to_col_index + 1
+                ).value  # openpyxlのcellは1列目が0になるので+1
+                striken_data[copy_to_col_index][striken_data_height] = original_value
+            striken_data_height: int = striken_data_height + 1
         # 打ち消し線がcheck対象の列にない場合
         else:
             # no_striken.xlsxの最終行に追加
-            copy_to_row_index: int = no_striken_ws.max_row + 1
-            for copy_to_col_index in range(1, input_ws.max_column + 1):
-                original_cell = input_ws.cell(row=row_index, column=copy_to_col_index)
-                no_striken_cell = no_striken_ws.cell(
-                    row=copy_to_row_index, column=copy_to_col_index, value=original_cell.value
-                )
-                if type(no_striken_cell) is Cell:
-                    # 文字装飾のコピー
-                    no_striken_cell.alignment = original_cell.alignment._StyleProxy__target
-                    no_striken_cell.border = original_cell.border._StyleProxy__target
-                    no_striken_cell.fill = original_cell.fill._StyleProxy__target
-                    no_striken_cell.font = original_cell.font._StyleProxy__target
-                    no_striken_cell.number_format = original_cell.number_format
-                    no_striken_cell.data_type = original_cell.data_type
-                    # TODO Cellクラスの親クラスStyleableObjectのメンバ変数への警告の修正
-                    no_striken_cell.hyperlink = original_cell.hyperlink
-                    no_striken_cell.comment = original_cell.comment
-                    no_striken_cell.value = original_cell.value
-                    no_striken_cell.protection = original_cell.protection._StyleProxy__target
-                else:
-                    print("正しくセルに書き込めませんでした。striken.xlsx {}行目 {}列目".format(copy_to_col_index, copy_to_row_index))
+            for copy_to_col_index in range(0, input_width):
+                original_value = input_ws.cell(
+                    row=row_index + 1, column=copy_to_col_index + 1
+                ).value  # openpyxlのcellは1列目が0になるので+1
+                no_striken_data[copy_to_col_index][no_striken_data_height] = original_value
+            no_striken_data_height = no_striken_data_height + 1
+
+    return [striken_data, no_striken_data]
