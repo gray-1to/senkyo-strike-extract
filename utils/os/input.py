@@ -1,4 +1,5 @@
 import os
+import traceback
 from typing import Union
 
 from openpyxl import load_workbook
@@ -16,7 +17,8 @@ def get_input_xlsx_data() -> list:
         # 入力ファイル読み込み
         input_wb: Workbook = load_workbook(filename=PATH)
         input_ws: Union[Worksheet, ReadOnlyWorksheet] = input_wb.worksheets[0]
-    except FileNotFoundError:
+    except FileNotFoundError as e:
+        print(traceback.format_exc())
         exit(1)
 
     return [input_wb, input_ws]
