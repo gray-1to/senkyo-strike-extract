@@ -21,7 +21,7 @@ def operation(input_ws: Union[Worksheet, ReadOnlyWorksheet]) -> list[pd.DataFram
     # check対象の列を特定
     check_col_indexes: list[int] = []
     for col_index in range(0, input_width):
-        # openpyxlのcellは1列目が0になるので+1
+        # openpyxlのcellは1列目はcolumnが1になるので+1
         if input_ws.cell(row=1, column=col_index + 1).value == "check":
             check_col_indexes.insert(-1, col_index)
 
@@ -34,7 +34,7 @@ def operation(input_ws: Union[Worksheet, ReadOnlyWorksheet]) -> list[pd.DataFram
         strike_detected: bool = False
         # check対象の列をチェック
         for col_index in check_col_indexes:
-            # openpyxlのcellは1列目が0になるので+1
+            # openpyxlのcellは1列目はcolumnが1になるので+1
             if input_ws.cell(row=row_index + 1, column=col_index + 1).font.strike is True:
                 strike_detected = True
         # 打ち消し線がcheck対象の列にある場合
@@ -43,7 +43,7 @@ def operation(input_ws: Union[Worksheet, ReadOnlyWorksheet]) -> list[pd.DataFram
             for copy_to_col_index in range(0, input_width):
                 original_value: Union[date, str, int, None] = input_ws.cell(
                     row=row_index + 1, column=copy_to_col_index + 1
-                ).value  # openpyxlのcellは1列目が0になるので+1
+                ).value  # openpyxlのcellは1列目はcolumnが1になるので+1
                 strike_data[copy_to_col_index][strike_data_height] = original_value
             strike_data_height = strike_data_height + 1
         # 打ち消し線がcheck対象の列にない場合
@@ -52,7 +52,7 @@ def operation(input_ws: Union[Worksheet, ReadOnlyWorksheet]) -> list[pd.DataFram
             for copy_to_col_index in range(0, input_width):
                 original_value: Union[date, str, int, None] = input_ws.cell(
                     row=row_index + 1, column=copy_to_col_index + 1
-                ).value  # openpyxlのcellは1列目が0になるので+1
+                ).value  # openpyxlのcellは1列目はcolumnが1になるので+1
                 no_strike_data[copy_to_col_index][no_strike_data_height] = original_value
             no_strike_data_height = no_strike_data_height + 1
 

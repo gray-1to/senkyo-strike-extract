@@ -18,12 +18,12 @@ def main():
     input_wb, input_ws = get_input_xlsx_data()
 
     # 処理実行
-    striken_data: pd.DataFrame
-    no_striken_data: pd.DataFrame
-    striken_data, no_striken_data = operation(input_ws)
+    strike_data: pd.DataFrame
+    no_strike_data: pd.DataFrame
+    strike_data, no_strike_data = operation(input_ws)
 
     # 出力ファイル保存
-    create_output_xlsx(striken_data, no_striken_data)
+    create_output_xlsx(strike_data, no_strike_data)
     input_wb.close()
 
 

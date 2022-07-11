@@ -1,7 +1,8 @@
-from typing import Any
+from datetime import date
+from typing import Union
 
 
-def to_str(value: Any) -> str:
+def to_str(value: Union[date, str, int, None]) -> str:
     if value is None:
         return ""
     elif type(value) is str:
