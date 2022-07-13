@@ -8,7 +8,9 @@ from tqdm import tqdm
 from utils.os.output import prepare_output_pd
 
 
-def operation(input_ws: Union[Worksheet, ReadOnlyWorksheet], progressReport: bool = False) -> list[pd.DataFrame]:
+def operation(
+    input_ws: Union[Worksheet, ReadOnlyWorksheet], progress_report_option: bool = False
+) -> list[pd.DataFrame]:
 
     # input_ws.fillna("", inplace=True)
 
@@ -31,7 +33,7 @@ def operation(input_ws: Union[Worksheet, ReadOnlyWorksheet], progressReport: boo
     no_strike_data_height: int = 2
     # 探索開始
     # 1,2行目はヘッダーなので、3行目からチェック開始
-    if progressReport:
+    if progress_report_option:
         # for --progress-report option
         for row_index in tqdm(range(2, input_height)):
             strike_detected: bool = False
