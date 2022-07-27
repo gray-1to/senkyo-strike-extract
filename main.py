@@ -14,7 +14,7 @@ from utils.os.output import create_output_xlsx
 
 def main(argv: list[str]) -> None:
 
-    progress_report_option: bool = "--progress-report" in argv
+    progress_report_option: bool = not ("--non_progress_report" in argv)
     # 入力ファイル展開
     if progress_report_option:
         print("入力ファイルの読み込み開始...")
@@ -47,14 +47,15 @@ if __name__ == "__main__":
     main(sys.argv[1:])
 
     # --option のエラーハンドリング
-    options: list[str] = ["--timer", "--progress-report"]
+    # セールスの人が使用する"python3 main.py"でプログレスバーを表示したいので-non_progress_reportをオプションに追加している
+    options: list[str] = ["--timer", "--non_progress_report"]
 
     print("\n")
     print("for programmer:")
 
     if any(arg not in options for arg in sys.argv[1:]):
         print("不正なoption, または引数が指定されています")
-    if "--progress-report" in sys.argv[1:]:
-        print("進行情報を表示しました")
+    if "--non_progress_report" in sys.argv[1:]:
+        print("進行情報を表示しませんでした")
     if "--timer" in sys.argv:
         print("実行時間: " + str(time.time() - start) + "sec")
