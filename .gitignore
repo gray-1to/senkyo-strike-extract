@@ -3,4 +3,5 @@ __pycache__
 /input/*
 /output/*
 !/input/input-example.xlsx
+!/input/input-challenge.xlsx
 .venv
