@@ -14,7 +14,7 @@ from utils.os.output import create_output_xlsx
 
 def main(argv: list[str]) -> None:
 
-    progress_report_option: bool = not ( "--non_progress-report" in argv )
+    progress_report_option: bool = not ("--non_progress-report" in argv)
     # 入力ファイル展開
     if progress_report_option:
         print("入力ファイルの読み込み開始...")
